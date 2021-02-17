@@ -18,12 +18,16 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QUrl url;
+    QNetworkAccessManager *manager;
 
 private:
     QList<QStringList> ReadFromCSV(QNetworkReply *reply);
 
 public slots:
-    void onDownloadFinished(QNetworkReply *reply);
+    void onSearch();
+    void onUpdateTableWidget(const QList<QStringList> &list);
+    void onRequestFinished(QNetworkReply *reply);
 };
 
 #endif // MAINWINDOW_H
