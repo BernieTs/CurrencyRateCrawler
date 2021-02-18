@@ -2,6 +2,7 @@
 #define CURRENCYRATEMANAGER_H
 
 #include <unordered_map>
+#include <QFileInfo>
 
 /**
  * @brief 匯率資訊結構
@@ -16,7 +17,7 @@ struct CurrencyRate
 
 /**
  * @brief 儲存匯率資訊類別
- * 此類別提供匯率資訊紀錄，查找等功能。
+ * 此類別提供匯率資訊紀錄，查找與資料輸出等功能。
  */
 class CurrencyRateManager
 {
@@ -26,6 +27,7 @@ public:
     bool GetCurrencyRate(const std::string &name, CurrencyRate &currencyRate);
     std::vector<CurrencyRate> GetAllCurrencyRateInfo();
     void RemoveAllCurrencyRate();
+    bool DownloadCurrencyRateByName(const std::string &name, QFileInfo filePath);
 
 private:
     std::unordered_map<std::string, CurrencyRate> currencyMap;

@@ -107,8 +107,19 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="1" colspan="3">
-        <widget class="QLineEdit" name="lineEdit_filePath"/>
+       <item row="1" column="1" colspan="2">
+        <widget class="QLineEdit" name="lineEdit_filePath">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="QToolButton" name="btn_ChangeDownloadDir">
+         <property name="text">
+          <string>...</string>
+         </property>
+        </widget>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="label_3">
@@ -124,6 +135,16 @@
         <widget class="QLabel" name="label_4">
          <property name="text">
           <string>.txt</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="3">
+        <widget class="QCheckBox" name="checkBox_LauchFile">
+         <property name="text">
+          <string>下載後打開檔案</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
          </property>
         </widget>
        </item>

@@ -4,7 +4,9 @@
 #include <QDebug>
 #include <QList>
 #include <QStringList>
-
+#include <QMessageBox>
+#include <QFileDialog>
+#include <QDesktopServices>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -26,7 +28,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->lineEdit_filePath->setText(QApplication::applicationDirPath());
 
     connect(ui->btn_Request, SIGNAL(clicked()), this, SLOT(onSearch()));
-    //connect(ui->btn_download, SIGNAL(clicked()), this, SLOT(onDownloadData()));
+    connect(ui->comboBox_currency, SIGNAL(currentTextChanged(QString)), this, SLOT(onComboBoxTextChanged(QString)));
+    connect(ui->btn_download, SIGNAL(clicked()), this, SLOT(onDownloadData()));
+    connect(ui->btn_ChangeDownloadDir, SIGNAL(clicked()), this, SLOT(onChangeDownloadDir()));
 }
 
 MainWindow::~MainWindow()
@@ -34,6 +38,12 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+/**
+ * @brief MainWindow::ReadFromCSV
+ * 將QNetWorkReply擷取到的CSV資料轉換成QList形式
+ * @param reply 擷取到的CSV資料
+ * @return 轉換過後的CSV資料，以QList形式輸出
+ */
 QList<QStringList> MainWindow::ReadFromCSV(QNetworkReply *reply)
 {
     QList<QStringList> listRes;
@@ -103,10 +113,43 @@ void MainWindow::onUpdateDownloadCombo()
         ui->comboBox_currency->addItem(QString::fromStdString(rates.at(i).CurrName));
 }
 
+void MainWindow::onDownloadData()
+{
+    QString filename = ui->lineEdit_fileName->text() + ".txt";
+    QFileInfo fileInfo(ui->lineEdit_filePath->text(), filename);
+
+    std::string sCurrencyType = ui->comboBox_currency->currentText().toStdString();
+    if(!crManager.DownloadCurrencyRateByName(sCurrencyType, fileInfo.absoluteFilePath()))
+    {
+        QMessageBox::warning(this, "下載錯誤", "下載資料錯誤，請重新操作");
+        return;
+    }
+
+    if(ui->checkBox_LauchFile->isChecked())
+        QDesktopServices::openUrl(QUrl::fromLocalFile(fileInfo.absoluteFilePath()));
+}
+
+void MainWindow::onChangeDownloadDir()
+{
+    QString qDir = QFileDialog::getExistingDirectory(this, "下載位置",
+                                                     QApplication::applicationDirPath(),
+                                                     QFileDialog::ShowDirsOnly);
+    ui->lineEdit_filePath->setText(qDir);
+}
+
+void MainWindow::onComboBoxTextChanged(QString s)
+{
+    QString fileName = sCurrentDateTime + "_" + s;
+    ui->lineEdit_fileName->setText(fileName);
+}
+
 void MainWindow::onRequestFinished(QNetworkReply *reply)
 {
     qDebug() << "request finish!";
     reply->setTextModeEnabled(true);
+
+    //紀錄搜尋時間
+    sCurrentDateTime = QDateTime::currentDateTime().toString("yyyyMMdd-hh-mm-ss");
 
     //讀取url的csv檔案
     QList<QStringList> retList = ReadFromCSV(reply);

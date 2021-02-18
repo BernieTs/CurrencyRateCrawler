@@ -1,10 +1,16 @@
 #include "CurrencyRateManager.h"
+#include <QDebug>
 
 CurrencyRateManager::CurrencyRateManager()
 {
 
 }
 
+/**
+ * @brief CurrencyRateManager::AddCurrencyRate
+ * 將CurrencyRate物件加入至CurrencyRateManager map中
+ * @param rate 預加入的CurrencyRate物件
+ */
 void CurrencyRateManager::AddCurrencyRate(CurrencyRate rate)
 {
     if(GetCurrencyRate(rate.CurrName, CurrencyRate())) //object已經在map中了
@@ -54,4 +60,38 @@ std::vector<CurrencyRate> CurrencyRateManager::GetAllCurrencyRateInfo()
 void CurrencyRateManager::RemoveAllCurrencyRate()
 {
     currencyMap.clear();
+}
+
+/**
+ * @brief CurrencyRateManager::DownloadCurrencyRateByName
+ * 將map中特定name的CurrencyRate資料輸出成.txt檔案
+ * @param name 預輸出的貨幣名稱
+ * @param filePath 輸出的檔案位置
+ * @return 如果map沒有該筆資料或檔案輸出不成功則返回false
+ */
+bool CurrencyRateManager::DownloadCurrencyRateByName(const std::string &name, QFileInfo filePath)
+{
+    CurrencyRate cr;
+    if(!GetCurrencyRate(name, cr)) //object不在map中時
+    {
+        qDebug()<<"!GetCurrencyRate(name, cr)";
+        return false;
+    }
+
+    qDebug()<<filePath.absoluteFilePath();
+    QFile file(filePath.absoluteFilePath());
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text) )
+    {
+        qDebug()<<"Cannot open file for writing";
+        return false;
+    }
+
+    QTextStream out( &file );
+    out << QString("幣別：") << QString::fromStdString(cr.CurrName) << "\n";
+    out << QString("匯率：") << QString::fromStdString(cr.sDescription) << "\n";
+    out << QString("現金匯率：") << QString::number(cr.buyValue) << "\n";
+    out << QString("即期匯率：") << QString::number(cr.sellValue) << "\n";
+
+    file.close();
+    return true;
 }

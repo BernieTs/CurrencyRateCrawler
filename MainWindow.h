@@ -20,6 +20,7 @@ public:
 private:
     Ui::MainWindow *ui;
     QUrl url;
+    QString sCurrentDateTime;
     QNetworkAccessManager *manager;
     CurrencyRateManager crManager;
 
@@ -32,6 +33,9 @@ public slots:
     void onSearch();
     void onUpdateTableWidget();
     void onUpdateDownloadCombo();
+    void onDownloadData();
+    void onChangeDownloadDir();
+    void onComboBoxTextChanged(QString s);
     void onRequestFinished(QNetworkReply *reply);
 };
 
