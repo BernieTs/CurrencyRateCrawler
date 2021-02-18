@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>res/exchange.ico</file>
+    </qresource>
+</RCC>
