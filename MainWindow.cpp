@@ -14,6 +14,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    setWindowTitle("台灣銀行匯率查詢系統");
+    resize(1200,1200);
+
     //network config
     url = QUrl("https://rate.bot.com.tw/xrt/flcsv/0/day");
     manager = new QNetworkAccessManager(this);
@@ -145,6 +148,12 @@ void MainWindow::onComboBoxTextChanged(QString s)
 
 void MainWindow::onRequestFinished(QNetworkReply *reply)
 {
+    if (reply->error())
+    {
+        QMessageBox::warning(this, "網路錯誤", "請確認網路連線並重新操作");
+        return;
+    }
+
     qDebug() << "request finish!";
     reply->setTextModeEnabled(true);
 
