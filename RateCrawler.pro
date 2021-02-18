@@ -27,10 +27,12 @@ QMAKE_CXXFLAGS += /utf-8
 CONFIG += c++11
 
 SOURCES += \
+        CurrencyRateManager.cpp \
         main.cpp \
         MainWindow.cpp
 
 HEADERS += \
+        CurrencyRateManager.h \
         MainWindow.h
 
 FORMS += \
